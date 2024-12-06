@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="index.css">
+  <title>DYNAMIC AUDIO PROCESSING</title>
+  <link rel="icon" type="image/png" href="./favicon/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="./favicon/favicon.svg" />
+  <link rel="shortcut icon" href="./favicon/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./favicon/apple-touch-icon.png" />
+  
+  <!-- Include Wavesurfer.js -->
+  <script src="https://unpkg.com/wavesurfer.js"></script>
+</head>
+<body>
+
+  <!-- Logo Section -->
+  <div class="logo">
+    <img src="Logo.png" alt="Logo">
+  </div>
+
+  <h1 style="text-align: center;">DYNAMIC AUDIO PROCESSING</h1>
+
+  <!-- Upload File Section -->
+  <form id="audioForm" enctype="multipart/form-data">
+    <label for="audioFile">Upload Audio File:</label>
+    <input type="file" name="audio" id="audioFile" accept=".wav,.mp3" required><br><br>
+
+    <!-- Input Audio Player -->
+    <div id="inputAudioPlayer" style="display:none;">
+      <h3>Input Audio File:</h3>
+      <audio id="audioInput" controls></audio>
+    </div>
+
+    <!-- Navigation Bar for Tabs -->
+    <div class="navbar">
+      <button class="active" onclick="showTab('noise')">NOISE</button>
+      <button onclick="showTab('equalizer')">EQUALISER</button>
+      <button onclick="showTab('compression')">COMPRESSION</button>
+      <button onclick="showTab('volume')">VOLUME MULTIPLIER</button>
+    </div>
+
+    <!-- NOISE TAB -->
+    <div id="noise" class="tab active">
+      <div class="tab-content">
+        <label for="gateThresholdSlider">Noise Threshold (0.01 - 1.0):
+          <span class="info-icon" data-tooltip="Lower value removes less noise and vice-versa">i</span>
+        </label>
+        <div style="display: flex; align-items: center;">
+          <input type="range" id="gateThresholdSlider" min="0.01" max="1" step="0.01" value="0.05" oninput="updateValue('noiseThresholdValue', this.value)" style="width: 95%;padding-right: 0;padding-left: 0; ">
+          <input type="text" class= "sliderValue" id="noiseThresholdValue" value="0.05" disabled><br><br>
+        </div>
+
+        <label for="gateAttack">Noise Gate Opening Delay (ms):
+          <span class="info-icon" data-tooltip="Time it takes for the audio processing gate to open when sound reaches the threshold">i</span>
+        </label>
+        <input type="number" id="gateAttack" value="80" min="0"><br><br>
+
+        <label for="gateRelease">Noise Gate Closing Delay (ms):
+        <span class="info-icon" data-tooltip="Time it takes for the audio processing gate to close after the sound falls below the threshold.">i</span>
+        </label>
+        <input type="number" id="gateRelease" value="840" min="0"><br><br>
+        
+        <label for="highpassFreq">Reduce Low Frequencies (Hz):
+          <span class="info-icon" data-tooltip="Removes low frequencies below this value">i</span>
+        </label>
+        <input type="number" id="highpassFreq" value="100" min="0"><br><br>
+        
+        <label for="lowpassFreq">Reduce High Frequencies (Hz):
+          <span class="info-icon" data-tooltip="Removes high frequencies above this value">i</span>
+        </label>
+        <input type="number" id="lowpassFreq" value="10000" min="0"><br><br>
+      </div>
+    </div>
+
+    <!-- EQUALISER TAB -->
+    <div id="equalizer" class="tab">
+      <div class="tab-content">
+        <h3>Equalizer Settings</h3>
+        <h4 style="color: #8b8b8b;">Customizable frequency boosts or cuts for specific ranges</h4>
+        <br><br>
+        <div style="display: flex; align-items: center;">
+          <label for="option1" style="margin-right: 10px;">Custom Frequency Settings</label>
+          <input type="radio" id="option1" name="equalizerOption" value="option1" checked onclick="updateEqualizerSettings()">
+        </div>
+        <div style="display: flex; align-items: center;">
+          <label for="option2" style="margin-right: 107px;">Equalise Audio</label><br>
+          <input type="radio" id="option2" name="equalizerOption" value="option2" onclick="updateEqualizerSettings()">
+        </div>
+        <br><br>
+
+        <div id="option1Settings">
+          <label for="frequency1">Frequency to Adjust (Hz):</label>
+          <input type="number" id="frequency1" name="frequency" value="0" min="0" max="20000"><br><br>
+
+          <label for="width1">Width (Hz):</label>
+          <input type="number" id="width1" name="width" value="0" min="0"><br><br>
+
+          <label for="boost1">Boost/Cut (dB):</label>
+          <input type="number" id="boost1" name="boost" step="0.1" value="0" min="-12" max="200"><br><br>
+        </div>
+
+        <div id="option2Settings" style="display: none;">
+          <p>Hardcoded Equalizer Settings for Enhancing Whisper:</p>
+          <p>Boosts 250Hz by 2db over a width of 100 , Boosts 2000Hz by 2db over a width of 1000 </p>
+          <p>Cuts 700Hz by 5db over a width of 500</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPRESSION TAB -->
+    <div id="compression" class="tab">
+      <div class="tab-content">
+        <label for="compressorThresholdSlider">Volume Cutoff Level (0 - 1.0):
+          <span class="info-icon" data-tooltip="Sets the level at which compression starts">i</span>
+        </label>
+        <div style="display: flex; align-items: center;">
+          <input type="range" id="compressorThresholdSlider" min="0" max="1" step="0.01" value="0.02" oninput="updateValue('compressorThresholdValue', this.value)" style="width: 95%;padding-right: 0;padding-left: 0; ">
+          <input type="text" class= "sliderValue" id="compressorThresholdValue" value="0.02" disabled><br><br>
+        </div>
+        <label for="compressorRatioSlider">Compression Strength (1 - 20):
+          <span class="info-icon" data-tooltip="Controls how strongly the audio is compressed. Higher value indicates more">i</span>
+        </label>
+        <div style="display: flex; align-items: center;">
+          <input type="range" id="compressorRatioSlider" min="1" max="20" step="1" value="20" oninput="updateValue('compressorRatioValue', this.value)" style="width: 95%;padding-right: 0;padding-left: 0; ">
+          <input type="text" class= "sliderValue" id="compressorRatioValue" value="20" disabled><br><br>
+        </div>
+      </div>
+    </div>
+
+    <!-- VOLUME MULTIPLIER TAB -->
+    <div id="volume" class="tab">
+      <div class="tab-content">
+        <label for="volumeSlider">Volume Multiplier (0.1 - 30.0):
+          <span class="info-icon" data-tooltip="Increases or decreases the overall volume of the audio">i</span>
+        </label>
+        <div style="display: flex; align-items: center;">
+          <input type="range" id="volumeSlider" min="0.1" max="30.0" step="0.1" value="1.0" oninput="updateValue('volumeMultiplierValue', this.value)" style="width: 95%;padding-right: 0;padding-left: 0; ">
+          <input type="text" class= "sliderValue" id="volumeMultiplierValue" value="1.0" disabled><br><br>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit">Process Audio</button><br>
+    <div>
+    <!-- Processed Audio Player -->
+    <label>PROCESSED AUDIO</label>
+    <audio id="audioPlayer" controls></audio>
+    </div>
+    <!-- Waveform containers (uploaded and processed) -->
+    <br><br>
+    <div id="uploadWaveformContainer" style="display:none;">
+      <div id="uploadWaveform">
+       
+      </div>
+    </div>
+
+    <div id="processedWaveformContainer" style="display:none;">
+      
+      <div id="processedWaveform">
+      </div>
+    </div>
+
+  </form>
+
+  <script>
+    let inputAudioBuffer, processedAudioBuffer;
+
+    function showTab(tabId) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.navbar button').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      document.querySelector(`button[onclick="showTab('${tabId}')"]`).classList.add('active');
+    }
+
+    function updateValue(id, value) {
+      document.getElementById(id).value = value;
+    }
+
+    // Function to create waveform using Wavesurfer.js
+    function createWaveform(audioUrl, containerId) {
+      const wavesurfer = WaveSurfer.create({
+        container: `#${containerId}`,
+        waveColor: '#237399',
+        progressColor: '#237399',
+        height: 60,
+        responsive: false,
+        interact: false
+      });
+
+      wavesurfer.load(audioUrl);
+    }
+
+    // Form submission handling
+    const form = document.getElementById('audioForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData();
+      formData.append('audio', document.getElementById('audioFile').files[0]);
+      const audioFile = document.getElementById('audioFile').files[0];
+      const inputAudioUrl = URL.createObjectURL(audioFile);
+
+      const selectedOption = document.querySelector('input[name="equalizerOption"]:checked').value;
+      formData.append('equalizerOption', selectedOption);
+      formData.append('frequency', document.getElementById('frequency1').value);
+      formData.append('width', document.getElementById('width1').value);
+      formData.append('boost', document.getElementById('boost1').value);
+      formData.append('gateThreshold', document.getElementById('gateThresholdSlider').value);
+      formData.append('gateAttack', document.getElementById('gateAttack').value);
+      formData.append('gateRelease', document.getElementById('gateRelease').value);
+      formData.append('highpassFreq', document.getElementById('highpassFreq').value);
+      formData.append('lowpassFreq', document.getElementById('lowpassFreq').value);
+      formData.append('compressorThreshold', document.getElementById('compressorThresholdSlider').value);
+      formData.append('compressorRatio', document.getElementById('compressorRatioSlider').value);
+      formData.append('volume', document.getElementById('volumeSlider').value);
+
+      const response = await fetch('/process-audio', { method: 'POST', body: formData });
+      if (response.ok) {
+        const blob = await response.blob();
+        const audioUrl = URL.createObjectURL(blob);
+
+        // Show processed audio
+        document.getElementById('audioPlayer').src = audioUrl;
+
+        // Example usage: Load waveform data and check if it should be displayed
+        loadUploadWaveformData();  // Simulate loading uploaded waveform data
+        loadProcessedWaveformData();  // Simulate loading processed waveform data
+
+        // Create the waveform for the processed audio
+        createWaveform(inputAudioUrl, 'uploadWaveform');
+        createWaveform(audioUrl, 'processedWaveform');
+      } else {
+        alert('Failed to process audio.');
+      }
+    });
+
+    function updateEqualizerSettings() {
+      const selectedRadio = document.querySelector('input[name="equalizerOption"]:checked');
+      document.getElementById('option1Settings').style.display = 'none';
+      document.getElementById('option2Settings').style.display = 'none';
+
+      if (selectedRadio.id === 'option1') {
+        document.getElementById('option1Settings').style.display = 'block';
+      } else if (selectedRadio.id === 'option2') {
+        document.getElementById('option2Settings').style.display = 'block';
+      }
+    }
+
+    function showWaveformContainer(containerId) {
+    const container = document.getElementById(containerId);
+    
+    // Check if the container has any content
+    if (container && container.innerHTML.trim() !== "") {
+      container.style.display = "block"; // Show the container if it has content
+    } else {
+      container.style.display = "none"; // Hide the container if no content
+    }
+  }
+
+  // Simulate adding content to the uploaded waveform container
+  function loadUploadWaveformData() {
+    const waveformContainer = document.getElementById('uploadWaveform');
+
+    // Simulate adding content (waveform data) into the container
+    waveformContainer.innerHTML = "<h3>AMPLITUDE GRAPHS</h3><br><h4 style=\"color: #0a212c;\">UPLOADED AUDIO</h4><br>";  // This can be replaced with actual waveform logic
+
+    // Call the function to show the container if it has content
+    showWaveformContainer('uploadWaveformContainer');
+  }
+
+  // Simulate adding content to the processed waveform container
+  function loadProcessedWaveformData() {
+    const waveformContainer = document.getElementById('processedWaveform');
+    
+    // Simulate adding content (processed waveform data) into the container
+    waveformContainer.innerHTML = "<br><h4 style=\"color: #0a212c;\">PROCESSED AUDIO</h4><br>";  // This can be replaced with actual waveform logic
+
+    // Call the function to show the container if it has content
+    showWaveformContainer('processedWaveformContainer');
+  }
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+/* Global Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  margin: 0;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  color: #32a4da;
+  margin: 20px 0;
+}
+
+/* Basic Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Form Styles */
+form {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: bold;
+  margin-top: 10px;
+  display: block;
+}
+
+input[type="file"],
+input[type="number"],
+input[type="text"]:not(.sliderValue),
+input[type="range"],
+button {
+  width: 100%;
+  padding: 16px;
+  margin: 10px 0 20px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  font-size: 18px;
+}
+
+input[type="radio"]{
+  margin-top: 9px;
+}
+
+.sliderValue {
+  width: 5%;
+  height: 20px;
+  margin: 10px 0 20px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bolder;
+}
+
+button {
+  background-color: #32a4da;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #1c8ab7;
+}
+
+audio {
+  display: block;
+  margin: 20px auto;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+p {
+  font-size: 12px;
+  color: #777;
+}
+
+/* Navbar Styles */
+.navbar {
+  display: flex;
+  justify-content: space-evenly;
+  background-color: #0c0d0e;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  padding: 5px 0;
+}
+
+.navbar button {
+  background-color: #0c0d0e;
+  color: white;
+  padding: 12px 20px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.navbar button:hover {
+  background-color: #32a4da;
+  transform: scale(1.05);
+}
+
+.navbar button.active {
+  background-color: #32a4da;
+}
+
+/* Tab Content Styles */
+.tab {
+  display: none;
+}
+
+.tab.active {
+  display: block;
+}
+
+.tab-content {
+  margin-top: 10px;
+}
+
+canvas {
+  border: 1px solid #000;
+  margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    padding: 5px;
+  }
+
+  .navbar button {
+    width: 50%;
+    margin-bottom: 5px;
+  }
+
+  form {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar button {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+
+  input[type="file"],
+  input[type="number"],
+  input[type="text"],
+  input[type="range"],
+  button {
+    width: 100%;
+  }
+
+  audio {
+    max-width: 100%;
+  }
+}
+
+/* Centering the logo */
+.logo {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.logo img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Info Icon Styling */
+.info-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-color: #007BFF;
+  color: white;
+  text-align: center;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 5px;
+  position: relative;
+}
+
+/* Tooltip Styling */
+.info-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%; /* Position above the icon */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #555;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  visibility: hidden; /* Initially hidden */
+  opacity: 0;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+  font-size: 15px;
+}
+
+/* Show Tooltip on Hover */
+.info-icon:hover::after {
+  visibility: visible;
+  opacity: 1;
+}
+
